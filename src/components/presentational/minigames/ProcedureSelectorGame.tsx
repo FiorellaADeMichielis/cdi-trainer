@@ -1,11 +1,13 @@
 import React from 'react';
-import { PROCEDURE_QUESTIONS } from '../../../data/minigamesData';
+import { PROCEDURE_QUESTIONS, ProcedureQuestion } from '../../../data/minigamesData';
 import { MathView } from '../../common/MathView';
 import { IconArrowRight, IconArrowLeft } from '../../icons';
 
 interface ProcedureSelectorGameProps {
   procedureIndex: number;
   selectedOptionId: string | null;
+  currentQuestion?: ProcedureQuestion;
+  totalQuestions?: number;
   onAnswer: (optionId: string, isCorrect: boolean) => void;
   onNext: () => void;
   onBackToHub: () => void;
@@ -14,11 +16,14 @@ interface ProcedureSelectorGameProps {
 export const ProcedureSelectorGame: React.FC<ProcedureSelectorGameProps> = ({
   procedureIndex,
   selectedOptionId,
+  currentQuestion,
+  totalQuestions,
   onAnswer,
   onNext,
   onBackToHub
 }) => {
-  const currentQ = PROCEDURE_QUESTIONS[procedureIndex] || PROCEDURE_QUESTIONS[0];
+  const currentQ = currentQuestion || PROCEDURE_QUESTIONS[procedureIndex] || PROCEDURE_QUESTIONS[0];
+  const total = totalQuestions ?? PROCEDURE_QUESTIONS.length;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
@@ -34,7 +39,7 @@ export const ProcedureSelectorGame: React.FC<ProcedureSelectorGameProps> = ({
       <div className="p-6 sm:p-8 lg:p-10 rounded-2xl bg-[#14161a] border border-zinc-800 shadow-xl space-y-8">
         <div className="flex items-center justify-between">
           <span className="text-xs font-mono font-bold text-amber-400">
-            Reconocimiento de Estrategia ({procedureIndex + 1} / {PROCEDURE_QUESTIONS.length})
+            Reconocimiento de Estrategia ({procedureIndex + 1} / {total})
           </span>
           <span className="text-xs text-zinc-400 font-mono">
             {currentQ.unitId}

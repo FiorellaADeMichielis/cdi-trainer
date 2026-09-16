@@ -1,10 +1,12 @@
 import React from 'react';
-import { MYSTERY_GRAPH_QUESTIONS } from '../../../data/minigamesData';
+import { MYSTERY_GRAPH_QUESTIONS, MysteryGraphQuestion } from '../../../data/minigamesData';
 import { IconArrowRight, IconArrowLeft } from '../../icons';
 
 interface MysteryGraphGameProps {
   mysteryIndex: number;
   selectedMysteryOption: string | null;
+  currentQuestion?: MysteryGraphQuestion;
+  totalQuestions?: number;
   onSelectOption: (optionId: string, isCorrect: boolean) => void;
   onNext: () => void;
   onBackToHub: () => void;
@@ -13,11 +15,14 @@ interface MysteryGraphGameProps {
 export const MysteryGraphGame: React.FC<MysteryGraphGameProps> = ({
   mysteryIndex,
   selectedMysteryOption,
+  currentQuestion,
+  totalQuestions,
   onSelectOption,
   onNext,
   onBackToHub
 }) => {
-  const currentQ = MYSTERY_GRAPH_QUESTIONS[mysteryIndex] || MYSTERY_GRAPH_QUESTIONS[0];
+  const currentQ = currentQuestion || MYSTERY_GRAPH_QUESTIONS[mysteryIndex] || MYSTERY_GRAPH_QUESTIONS[0];
+  const total = totalQuestions ?? MYSTERY_GRAPH_QUESTIONS.length;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
@@ -33,7 +38,7 @@ export const MysteryGraphGame: React.FC<MysteryGraphGameProps> = ({
       <div className="p-6 sm:p-8 lg:p-10 rounded-2xl bg-[#14161a] border border-zinc-800 shadow-xl space-y-8">
         <div>
           <span className="text-xs font-mono font-bold text-amber-400">
-            Geometría y Visualización ({mysteryIndex + 1} / {MYSTERY_GRAPH_QUESTIONS.length})
+            Geometría y Visualización ({mysteryIndex + 1} / {total})
           </span>
           <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mt-1 font-academic">
             {currentQ.title}

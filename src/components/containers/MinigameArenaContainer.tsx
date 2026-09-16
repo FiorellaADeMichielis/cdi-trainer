@@ -23,16 +23,25 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
     rushIndex,
     rushTimeLeft,
     rushGameOver,
+    currentRushQuestion,
+    totalRushQuestions,
     procedureIndex,
     selectedProcedureOption,
+    currentProcedureQuestion,
+    totalProcedureQuestions,
     detectiveIndex,
     selectedFlawedStep,
+    currentDetectiveCase,
+    totalDetectiveCases,
+    orderCurrentTask,
     orderSteps,
     orderEvaluated,
     orderIsCorrect,
     memoryCards,
     mysteryIndex,
     selectedMysteryOption,
+    currentMysteryQuestion,
+    totalMysteryQuestions,
     selectedJeopardyQ,
     answeredJeopardyIds,
     jeopardyFeedback,
@@ -87,6 +96,8 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
           rushTimeLeft={rushTimeLeft}
           currentScore={currentScore}
           gameOver={rushGameOver}
+          currentQuestion={currentRushQuestion}
+          totalQuestions={totalRushQuestions}
           onAnswer={handleFormulaRushAnswer}
           onRestart={startFormulaRush}
           onBackToHub={navigateToHub}
@@ -97,6 +108,8 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
         <ProcedureSelectorGame
           procedureIndex={procedureIndex}
           selectedOptionId={selectedProcedureOption}
+          currentQuestion={currentProcedureQuestion}
+          totalQuestions={totalProcedureQuestions}
           onAnswer={handleProcedureAnswer}
           onNext={nextProcedureQuestion}
           onBackToHub={navigateToHub}
@@ -107,6 +120,8 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
         <MathDetectiveGame
           detectiveIndex={detectiveIndex}
           selectedFlawedStep={selectedFlawedStep}
+          currentCase={currentDetectiveCase}
+          totalCases={totalDetectiveCases}
           onSelectStep={handleDetectiveSelectStep}
           onNext={nextDetectiveQuestion}
           onBackToHub={navigateToHub}
@@ -115,6 +130,7 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
 
       {activeGame === 'order_procedure' && (
         <OrderProcedureGame
+          currentTask={orderCurrentTask}
           orderSteps={orderSteps}
           orderEvaluated={orderEvaluated}
           orderIsCorrect={orderIsCorrect}
@@ -136,6 +152,8 @@ export const MinigameArenaContainer: React.FC<MinigameArenaContainerProps> = ({
         <MysteryGraphGame
           mysteryIndex={mysteryIndex}
           selectedMysteryOption={selectedMysteryOption}
+          currentQuestion={currentMysteryQuestion}
+          totalQuestions={totalMysteryQuestions}
           onSelectOption={handleMysteryOptionSelect}
           onNext={nextMysteryGraph}
           onBackToHub={navigateToHub}

@@ -5,9 +5,23 @@ import {
   DETECTIVE_QUESTIONS, 
   ORDER_PROCEDURE_QUESTIONS, 
   MYSTERY_GRAPH_QUESTIONS,
+  FormulaRushQuestion,
+  ProcedureQuestion,
+  DetectiveQuestion,
+  OrderProcedureQuestion,
+  MysteryGraphQuestion,
   JeopardyQuestion
 } from '../data/minigamesData';
 import { soundService } from '../services/soundService';
+import {
+  shuffle,
+  shuffleFormulaRushQuestion,
+  shuffleProcedureQuestion,
+  shuffleJeopardyQuestion,
+  shuffleMysteryGraphQuestion,
+  shuffleOrderProcedureSteps,
+  selectRandom
+} from '../services/randomEngine';
 
 const FORMULA_PAIRS = [
   { pairId: '1', concept: 'Regla de la Cadena', formulaLatex: "f'(g(x)) \\cdot g'(x)" },
@@ -51,20 +65,34 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
   const [currentScore, setCurrentScore] = useState<number>(0);
 
   // --- Formula Rush ---
+  const [rushQuestions, setRushQuestions] = useState<FormulaRushQuestion[]>(() =>
+    shuffle(FORMULA_RUSH_QUESTIONS).map(q => shuffleFormulaRushQuestion(q))
+  );
   const [rushIndex, setRushIndex] = useState<number>(0);
   const [rushTimeLeft, setRushTimeLeft] = useState<number>(8);
   const [rushGameOver, setRushGameOver] = useState<boolean>(false);
 
   // --- Procedure Selector ---
+  const [procedureQuestions, setProcedureQuestions] = useState<ProcedureQuestion[]>(() =>
+    shuffle(PROCEDURE_QUESTIONS).map(q => shuffleProcedureQuestion(q))
+  );
   const [procedureIndex, setProcedureIndex] = useState<number>(0);
   const [selectedProcedureOption, setSelectedProcedureOption] = useState<string | null>(null);
 
   // --- Math Detective ---
+  const [detectiveQuestions, setDetectiveQuestions] = useState<DetectiveQuestion[]>(() =>
+    shuffle(DETECTIVE_QUESTIONS)
+  );
   const [detectiveIndex, setDetectiveIndex] = useState<number>(0);
   const [selectedFlawedStep, setSelectedFlawedStep] = useState<number | null>(null);
 
   // --- Order Procedure ---
-  const [orderSteps, setOrderSteps] = useState<OrderProcedureStep[]>(() => [...ORDER_PROCEDURE_QUESTIONS[0].scrambledSteps]);
+  const [orderCurrentTask, setOrderCurrentTask] = useState<OrderProcedureQuestion>(() =>
+    selectRandom(ORDER_PROCEDURE_QUESTIONS, { count: 1 })[0] || ORDER_PROCEDURE_QUESTIONS[0]
+  );
+  const [orderSteps, setOrderSteps] = useState<OrderProcedureStep[]>(() =>
+    shuffleOrderProcedureSteps(ORDER_PROCEDURE_QUESTIONS[0])
+  );
   const [orderEvaluated, setOrderEvaluated] = useState<boolean>(false);
   const [orderIsCorrect, setOrderIsCorrect] = useState<boolean>(false);
 
@@ -73,6 +101,9 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
 
   // --- Mystery Graph ---
+  const [mysteryQuestions, setMysteryQuestions] = useState<MysteryGraphQuestion[]>(() =>
+    shuffle(MYSTERY_GRAPH_QUESTIONS).map(q => shuffleMysteryGraphQuestion(q))
+  );
   const [mysteryIndex, setMysteryIndex] = useState<number>(0);
   const [selectedMysteryOption, setSelectedMysteryOption] = useState<string | null>(null);
 
@@ -90,6 +121,8 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
   // 1. Formula Rush logic
   const startFormulaRush = useCallback(() => {
     soundService.playClick();
+    const randomized = shuffle(FORMULA_RUSH_QUESTIONS).map(q => shuffleFormulaRushQuestion(q));
+    setRushQuestions(randomized);
     setActiveGame('formula_rush');
     setRushIndex(0);
     setRushTimeLeft(8);
@@ -121,17 +154,19 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
       soundService.playIncorrect();
     }
 
-    if (rushIndex + 1 < FORMULA_RUSH_QUESTIONS.length) {
+    if (rushIndex + 1 < rushQuestions.length) {
       setRushIndex(prev => prev + 1);
       setRushTimeLeft(8);
     } else {
       setRushGameOver(true);
     }
-  }, [rushTimeLeft, rushIndex, onEarnXp]);
+  }, [rushTimeLeft, rushIndex, rushQuestions.length, onEarnXp]);
 
   // 2. Procedure Selector logic
   const startProcedureSelector = useCallback(() => {
     soundService.playClick();
+    const randomized = shuffle(PROCEDURE_QUESTIONS).map(q => shuffleProcedureQuestion(q));
+    setProcedureQuestions(randomized);
     setActiveGame('procedure_selector');
     setProcedureIndex(0);
     setSelectedProcedureOption(null);
@@ -150,17 +185,19 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
 
   const nextProcedureQuestion = useCallback(() => {
     soundService.playClick();
-    if (procedureIndex + 1 < PROCEDURE_QUESTIONS.length) {
+    if (procedureIndex + 1 < procedureQuestions.length) {
       setProcedureIndex(prev => prev + 1);
       setSelectedProcedureOption(null);
     } else {
       setActiveGame('hub');
     }
-  }, [procedureIndex]);
+  }, [procedureIndex, procedureQuestions.length]);
 
   // 3. Detective logic
   const startDetective = useCallback(() => {
     soundService.playClick();
+    const randomized = shuffle(DETECTIVE_QUESTIONS);
+    setDetectiveQuestions(randomized);
     setActiveGame('math_detective');
     setDetectiveIndex(0);
     setSelectedFlawedStep(null);
@@ -179,21 +216,23 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
 
   const nextDetectiveQuestion = useCallback(() => {
     soundService.playClick();
-    if (detectiveIndex + 1 < DETECTIVE_QUESTIONS.length) {
+    if (detectiveIndex + 1 < detectiveQuestions.length) {
       setDetectiveIndex(prev => prev + 1);
       setSelectedFlawedStep(null);
     } else {
       setActiveGame('hub');
     }
-  }, [detectiveIndex]);
+  }, [detectiveIndex, detectiveQuestions.length]);
 
   // 4. Order Procedure logic
   const startOrderProcedure = useCallback(() => {
     soundService.playClick();
-    setActiveGame('order_procedure');
-    setOrderSteps([...ORDER_PROCEDURE_QUESTIONS[0].scrambledSteps]);
+    const randomTask = selectRandom(ORDER_PROCEDURE_QUESTIONS, { count: 1 })[0] || ORDER_PROCEDURE_QUESTIONS[0];
+    setOrderCurrentTask(randomTask);
+    setOrderSteps(shuffleOrderProcedureSteps(randomTask));
     setOrderEvaluated(false);
     setOrderIsCorrect(false);
+    setActiveGame('order_procedure');
   }, []);
 
   const moveOrderStep = useCallback((fromIndex: number, toIndex: number) => {
@@ -248,7 +287,7 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
         isMatched: false
       });
     });
-    setMemoryCards(cards.sort(() => Math.random() - 0.5));
+    setMemoryCards(shuffle(cards));
     setFlippedIndices([]);
   }, []);
 
@@ -287,6 +326,8 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
   // 6. Mystery Graph logic
   const startMysteryGraph = useCallback(() => {
     soundService.playClick();
+    const randomized = shuffle(MYSTERY_GRAPH_QUESTIONS).map(q => shuffleMysteryGraphQuestion(q));
+    setMysteryQuestions(randomized);
     setActiveGame('mystery_graph');
     setMysteryIndex(0);
     setSelectedMysteryOption(null);
@@ -305,13 +346,13 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
 
   const nextMysteryGraph = useCallback(() => {
     soundService.playClick();
-    if (mysteryIndex + 1 < MYSTERY_GRAPH_QUESTIONS.length) {
+    if (mysteryIndex + 1 < mysteryQuestions.length) {
       setMysteryIndex(prev => prev + 1);
       setSelectedMysteryOption(null);
     } else {
       setActiveGame('hub');
     }
-  }, [mysteryIndex]);
+  }, [mysteryIndex, mysteryQuestions.length]);
 
   // 7. Jeopardy logic
   const startJeopardy = useCallback(() => {
@@ -323,7 +364,7 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
 
   const handleSelectJeopardyQ = useCallback((q: JeopardyQuestion) => {
     soundService.playClick();
-    setSelectedJeopardyQ(q);
+    setSelectedJeopardyQ(shuffleJeopardyQuestion(q));
     setJeopardyFeedback(null);
   }, []);
 
@@ -366,16 +407,25 @@ export const useMinigames = ({ onEarnXp }: UseMinigamesProps) => {
     rushIndex,
     rushTimeLeft,
     rushGameOver,
+    currentRushQuestion: rushQuestions[rushIndex] || rushQuestions[0],
+    totalRushQuestions: rushQuestions.length,
     procedureIndex,
     selectedProcedureOption,
+    currentProcedureQuestion: procedureQuestions[procedureIndex] || procedureQuestions[0],
+    totalProcedureQuestions: procedureQuestions.length,
     detectiveIndex,
     selectedFlawedStep,
+    currentDetectiveCase: detectiveQuestions[detectiveIndex] || detectiveQuestions[0],
+    totalDetectiveCases: detectiveQuestions.length,
+    orderCurrentTask,
     orderSteps,
     orderEvaluated,
     orderIsCorrect,
     memoryCards,
     mysteryIndex,
     selectedMysteryOption,
+    currentMysteryQuestion: mysteryQuestions[mysteryIndex] || mysteryQuestions[0],
+    totalMysteryQuestions: mysteryQuestions.length,
     selectedJeopardyQ,
     answeredJeopardyIds,
     jeopardyFeedback,

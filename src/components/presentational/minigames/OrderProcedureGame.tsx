@@ -1,5 +1,5 @@
 import React from 'react';
-import { ORDER_PROCEDURE_QUESTIONS } from '../../../data/minigamesData';
+import { ORDER_PROCEDURE_QUESTIONS, OrderProcedureQuestion } from '../../../data/minigamesData';
 import { MathView } from '../../common/MathView';
 import { IconArrowUp, IconArrowDown, IconCheck, IconClose, IconArrowLeft } from '../../icons';
 
@@ -13,6 +13,7 @@ interface OrderProcedureGameProps {
   orderSteps: OrderStep[];
   orderEvaluated: boolean;
   orderIsCorrect: boolean;
+  currentTask?: OrderProcedureQuestion;
   onMoveStep: (fromIndex: number, toIndex: number) => void;
   onCheckOrder: () => void;
   onBackToHub: () => void;
@@ -22,11 +23,12 @@ export const OrderProcedureGame: React.FC<OrderProcedureGameProps> = ({
   orderSteps,
   orderEvaluated,
   orderIsCorrect,
+  currentTask,
   onMoveStep,
   onCheckOrder,
   onBackToHub
 }) => {
-  const currentTask = ORDER_PROCEDURE_QUESTIONS[0];
+  const activeTask = currentTask || ORDER_PROCEDURE_QUESTIONS[0];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
@@ -45,8 +47,13 @@ export const OrderProcedureGame: React.FC<OrderProcedureGameProps> = ({
             Algoritmos Canónicos • Cátedra UNNE
           </span>
           <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mt-1 font-academic">
-            {currentTask.title}
+            {activeTask.title}
           </h3>
+          {activeTask.problemPromptLatex && (
+            <div className="py-2 overflow-x-auto text-amber-200">
+              <MathView math={activeTask.problemPromptLatex} block />
+            </div>
+          )}
           <p className="text-xs sm:text-sm text-zinc-400 mt-1.5 leading-relaxed">
             Reordena los pasos algorítmicos utilizando los controles para cumplir con la resolución canónica exigida en examen.
           </p>

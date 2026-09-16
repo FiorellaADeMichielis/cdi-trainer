@@ -1,5 +1,5 @@
 import React from 'react';
-import { FORMULA_RUSH_QUESTIONS } from '../../../data/minigamesData';
+import { FORMULA_RUSH_QUESTIONS, FormulaRushQuestion } from '../../../data/minigamesData';
 import { MathView } from '../../common/MathView';
 import { IconClock, IconTrophy, IconArrowLeft } from '../../icons';
 
@@ -8,6 +8,8 @@ interface FormulaRushGameProps {
   rushTimeLeft: number;
   currentScore: number;
   gameOver: boolean;
+  currentQuestion?: FormulaRushQuestion;
+  totalQuestions?: number;
   onAnswer: (isCorrect: boolean) => void;
   onRestart: () => void;
   onBackToHub: () => void;
@@ -18,11 +20,14 @@ export const FormulaRushGame: React.FC<FormulaRushGameProps> = ({
   rushTimeLeft,
   currentScore,
   gameOver,
+  currentQuestion,
+  totalQuestions,
   onAnswer,
   onRestart,
   onBackToHub
 }) => {
-  const currentQ = FORMULA_RUSH_QUESTIONS[rushIndex] || FORMULA_RUSH_QUESTIONS[0];
+  const currentQ = currentQuestion || FORMULA_RUSH_QUESTIONS[rushIndex] || FORMULA_RUSH_QUESTIONS[0];
+  const total = totalQuestions ?? FORMULA_RUSH_QUESTIONS.length;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
@@ -41,7 +46,7 @@ export const FormulaRushGame: React.FC<FormulaRushGameProps> = ({
           <>
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono font-bold text-amber-400">
-                Pregunta {rushIndex + 1} de {FORMULA_RUSH_QUESTIONS.length}
+                Pregunta {rushIndex + 1} de {total}
               </span>
               <div className="flex items-center gap-2.5">
                 <div className={`font-mono font-black text-xs sm:text-sm px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${
