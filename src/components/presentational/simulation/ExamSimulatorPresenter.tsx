@@ -26,6 +26,7 @@ interface ExamSimulatorPresenterProps {
   onSelectAnswer: (exerciseId: string, optionId: string) => void;
   onSubmitExam: () => void;
   onFinish: () => void;
+  onRestartExam?: () => void;
 }
 
 export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
@@ -43,7 +44,8 @@ export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
   onSelectIndex,
   onSelectAnswer,
   onSubmitExam,
-  onFinish
+  onFinish,
+  onRestartExam
 }) => {
   const currentQuestion = passedCurrentQuestion || examQuestions[currentIndex] || examQuestions[0];
   const totalQuestions = passedTotalQuestions ?? examQuestions.length;
@@ -176,14 +178,26 @@ export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
             </div>
           )}
 
-          {/* Return CTA */}
-          <button
-            type="button"
-            onClick={onFinish}
-            className="w-full py-3.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm tracking-wide transition-colors cursor-pointer min-h-[48px]"
-          >
-            Volver al inicio
-          </button>
+          {/* Action CTAs */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            {onRestartExam && (
+              <button
+                type="button"
+                onClick={onRestartExam}
+                className="w-full sm:w-1/2 py-3.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm tracking-wide transition-colors cursor-pointer min-h-[48px] flex items-center justify-center gap-2"
+              >
+                <span>Rendir otro simulacro</span>
+                <IconArrowRight className="size-4" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onFinish}
+              className={`w-full ${onRestartExam ? 'sm:w-1/2' : ''} py-3.5 px-5 rounded-xl bg-[#1a1c22] hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-bold text-xs sm:text-sm tracking-wide transition-colors cursor-pointer min-h-[48px]`}
+            >
+              Volver al inicio
+            </button>
+          </div>
 
         </div>
       </div>

@@ -27,6 +27,7 @@ export const ExamSimulatorContainer: React.FC<ExamSimulatorContainerProps> = ({
     handleStartExam,
     handleSelectAnswer,
     handleSubmitExam,
+    handleRestartExam,
     handleFinish
   } = useExamSimulator({
     onRecordExamResult,
@@ -50,6 +51,7 @@ export const ExamSimulatorContainer: React.FC<ExamSimulatorContainerProps> = ({
       onSelectAnswer={handleSelectAnswer}
       onSubmitExam={handleSubmitExam}
       onFinish={handleFinish}
+      onRestartExam={handleRestartExam}
     />
   );
 };

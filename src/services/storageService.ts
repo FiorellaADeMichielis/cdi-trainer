@@ -11,6 +11,15 @@ import {
 import { CURRICULA_UNITS } from '../data/curriculaData';
 import { FORMULA_CARDS } from '../data/formulasData';
 import { SpacedRepetitionEngine } from './spacedRepetitionEngine';
+import { ExamSession } from './randomEngine';
+
+export interface ActiveExamData {
+  session: ExamSession;
+  answers: Record<string, string>;
+  timeLeft: number;
+  currentIndex: number;
+  examStarted: boolean;
+}
 
 const STORAGE_KEYS = {
   USER_PROFILE: 'unne_cdi_user_profile',
@@ -19,7 +28,8 @@ const STORAGE_KEYS = {
   MISTAKES: 'unne_cdi_mistakes',
   SPACED_CARDS: 'unne_cdi_spaced_cards',
   EXAM_RESULTS: 'unne_cdi_exam_results',
-  ACHIEVEMENTS: 'unne_cdi_achievements'
+  ACHIEVEMENTS: 'unne_cdi_achievements',
+  ACTIVE_EXAM: 'unne_cdi_active_exam'
 };
 
 export class StorageService {
@@ -202,6 +212,31 @@ export class StorageService {
       localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
     } catch (e) {
       console.error('Error saving achievements', e);
+    }
+  }
+
+  public static loadActiveExam(): ActiveExamData | null {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.ACTIVE_EXAM);
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  public static saveActiveExam(data: ActiveExamData): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.ACTIVE_EXAM, JSON.stringify(data));
+    } catch (e) {
+      console.error('Error saving active exam', e);
+    }
+  }
+
+  public static clearActiveExam(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.ACTIVE_EXAM);
+    } catch (e) {
+      console.error('Error clearing active exam', e);
     }
   }
 
