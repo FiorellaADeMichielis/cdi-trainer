@@ -8,10 +8,11 @@ import {
   IconCheckCircle, 
   IconClose 
 } from '../icons';
-import { UnitId, UnitMastery } from '../../types/domain';
+import { Exercise, UnitId, UnitMastery } from '../../types/domain';
 import { EXERCISES_DATA } from '../../data/exercisesData';
 import { MathView } from '../common/MathView';
 import { soundService } from '../../services/soundService';
+import { generateDiagnosticSession } from '../../services/randomEngine';
 
 interface DiagnosticModalProps {
   isOpen: boolean;
@@ -30,11 +31,21 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [selectedOptId, setSelectedOptId] = useState<string | null>(null);
+  const [diagnosticExercises, setDiagnosticExercises] = useState<Exercise[]>(() => generateDiagnosticSession(EXERCISES_DATA));
+
+  // Re-generate fresh balanced calibration session on modal opening
+  React.useEffect(() => {
+    if (isOpen) {
+      setDiagnosticExercises(generateDiagnosticSession(EXERCISES_DATA));
+      setStep('welcome');
+      setCurrentIndex(0);
+      setAnswers({});
+      setSelectedOptId(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  // Selected 5 representative questions from core units for calibration
-  const diagnosticExercises = EXERCISES_DATA.slice(0, 5);
   const currentEx = diagnosticExercises[currentIndex];
 
   const computeMasteries = (recordedAnswers: Record<string, boolean>): Record<UnitId, UnitMastery> => ({

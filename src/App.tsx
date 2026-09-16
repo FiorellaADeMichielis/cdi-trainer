@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useTrainerState } from './hooks/useTrainerState';
 import { EXERCISES_DATA } from './data/exercisesData';
 
+import { Exercise, UnitId } from './types/domain';
+import { generateStudySession } from './services/randomEngine';
+
 // Presentational & Container Components (Smart - Dumb Architecture)
 import { NavbarPresenter } from './components/presentational/NavbarPresenter';
 import { DashboardContainer } from './components/containers/DashboardContainer';
@@ -13,6 +16,8 @@ import { DiagnosticModal } from './components/diagnostic/DiagnosticModal';
 
 export const App: React.FC = () => {
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+  const [studyExercises, setStudyExercises] = useState<Exercise[]>(() => []);
+  const [studySessionKey, setStudySessionKey] = useState<number>(0);
 
   const {
     userProfile,
@@ -40,14 +45,23 @@ export const App: React.FC = () => {
     handleCompleteDiagnostic
   } = useTrainerState();
 
-  // Get active exercises for the study session based on unit selection or recommendation
-  const getStudyExercises = () => {
-    if (activeStudyUnitId) {
-      const unitEx = EXERCISES_DATA.filter(e => e.unitId === activeStudyUnitId);
-      return unitEx.length > 0 ? unitEx : EXERCISES_DATA;
+  // Generates and sets a fresh randomized study session with shuffled options
+  const startStudySession = (unitId?: UnitId | null) => {
+    const targetUnit = unitId !== undefined ? unitId : (activeStudyUnitId || recommendation.targetUnitId);
+    if (targetUnit) {
+      setActiveStudyUnitId(targetUnit);
     }
-    const recommendedEx = EXERCISES_DATA.filter(e => recommendation.exerciseIds.includes(e.id));
-    return recommendedEx.length > 0 ? recommendedEx : EXERCISES_DATA;
+    const count = Math.max(3, Math.min(8, Math.round(availableMinutes / 3)));
+    const recentExerciseIds = attempts.slice(-10).map(a => a.exerciseId);
+    const session = generateStudySession({
+      pool: EXERCISES_DATA,
+      unitId: targetUnit || undefined,
+      count,
+      excludeIds: recentExerciseIds
+    });
+    setStudyExercises(session);
+    setStudySessionKey(prev => prev + 1);
+    setActiveTab('study');
   };
 
   return (
@@ -59,8 +73,12 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         daysRemaining={daysRemaining}
         onSelectTab={(tab) => {
-          setActiveStudyUnitId(null);
-          setActiveTab(tab);
+          if (tab === 'study') {
+            startStudySession(activeStudyUnitId);
+          } else {
+            setActiveStudyUnitId(null);
+            setActiveTab(tab);
+          }
         }}
         onToggleSound={handleToggleSound}
         onResetData={handleResetData}
@@ -85,12 +103,10 @@ export const App: React.FC = () => {
             examResults={examResults}
             onChangeMinutes={setAvailableMinutes}
             onStartSession={() => {
-              setActiveStudyUnitId(recommendation.targetUnitId);
-              setActiveTab('study');
+              startStudySession(recommendation.targetUnitId);
             }}
             onTrainUnit={(unitId) => {
-              setActiveStudyUnitId(unitId);
-              setActiveTab('study');
+              startStudySession(unitId);
             }}
             onSelectTab={setActiveTab}
           />
@@ -99,7 +115,8 @@ export const App: React.FC = () => {
         {/* --- TAB: ACTIVE STUDY SESSION --- */}
         {activeTab === 'study' && (
           <StudySessionContainer
-            exercises={getStudyExercises()}
+            key={studySessionKey}
+            exercises={studyExercises.length > 0 ? studyExercises : generateStudySession({ pool: EXERCISES_DATA, unitId: activeStudyUnitId || undefined, count: 5 })}
             targetTopicTitle={activeStudyUnitId ? `Unidad ${activeStudyUnitId}` : recommendation.targetTopicTitle}
             durationMinutes={availableMinutes}
             onRecordAttempt={handleRecordAttempt}
