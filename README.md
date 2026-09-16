@@ -1,7 +1,7 @@
 # Entrenador para Examen Libre de Cálculo Diferencial e Integral
 ### Licenciatura en Sistemas de Información · FaCENA - UNNE
 
-Aplicación web educativa interactiva y adaptativa para la preparación del **Examen Libre** de **Cálculo Diferencial e Integral** en la Facultad de Ciencias Exactas y Naturales y Agrimensura (FaCENA) de la Universidad Nacional del Nordeste (UNNE).
+Aplicación web educativa interactiva y adaptativa para ayudar en la preparación del **Examen Libre** de **Cálculo Diferencial e Integral**.
 
 ---
 
@@ -66,12 +66,3 @@ npm run build
 ```
 
 Los archivos finales de distribución se generarán en la carpeta `dist/`.
-
----
-
-## Despliegue Gratuito
-
-El proyecto está optimizado para desplegarse con un solo clic en plataformas estáticas como:
-- **Vercel**: Conectar el repositorio de GitHub; detecta la configuración de Vite automáticamente.
-- **Cloudflare Pages**: Conectar el repositorio, seleccionar preset `Vite` (`npm run build`, output `dist`).
-
