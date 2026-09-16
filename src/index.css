@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0c0d10;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: #f4f4f5;
+  }
+  code, pre, .math-code {
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+/* Academic and Editorial Typography Utility Classes */
+.font-academic {
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+.font-editorial {
+  font-family: 'Libre Baskerville', Georgia, serif;
+}
+
+.font-mono-tech {
+  font-family: 'Fira Code', monospace;
+}
+
+/* Document & Dossier Styling (Neutral Carbon / Graphite) */
+.dossier-border {
+  border: 1px solid #262930;
+}
+
+.dossier-card {
+  background-color: #14161a;
+  border: 1px solid #262930;
+}
+
+/* Safe KaTeX math overflow on small screens */
+.katex-display {
+  margin: 0.75rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbars for clean academic UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0d10;
+}
+::-webkit-scrollbar-thumb {
+  background: #242730;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3e4c;
+}
