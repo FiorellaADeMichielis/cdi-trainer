@@ -271,3 +271,4 @@ export function generateDiagnosticSession(pool: readonly Exercise[], rng: () => 
 
   return shuffle(chosen, rng).map(ex => shuffleExerciseOptions(ex, rng));
 }
+
