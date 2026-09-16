@@ -31,11 +31,17 @@ export interface DetectiveQuestion {
   examHint: string;
 }
 
+export interface OrderProcedureStep {
+  id: string;
+  correctOrderIndex: number;
+  textLatex: string;
+}
+
 export interface OrderProcedureQuestion {
   id: string;
   title: string;
   problemPromptLatex: string;
-  scrambledSteps: { id: string; correctOrderIndex: number; textLatex: string }[];
+  scrambledSteps: OrderProcedureStep[];
 }
 
 export interface MysteryGraphQuestion {
