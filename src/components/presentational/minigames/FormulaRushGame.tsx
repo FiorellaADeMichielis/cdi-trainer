@@ -68,19 +68,27 @@ export const FormulaRushGame: React.FC<FormulaRushGameProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {currentQ.formulaOptions.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => onAnswer(opt.isCorrect)}
-                  className="p-5 rounded-xl bg-[#1a1c22] hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/60 transition-all text-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[52px]"
-                >
-                  <div className="text-xs font-bold text-zinc-400 group-hover:text-amber-300 mb-1.5 font-mono">
-                    {opt.name}
-                  </div>
-                  <MathView math={opt.latex} block />
-                </button>
-              ))}
+              {currentQ.formulaOptions.map((opt, optIdx) => {
+                const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIdx] || String.fromCharCode(65 + optIdx);
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => onAnswer(opt.isCorrect)}
+                    className="p-5 rounded-xl bg-[#1a1c22] hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/60 transition-all text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[52px] flex items-center gap-3.5"
+                  >
+                    <span className="size-7 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 bg-zinc-800 text-zinc-400 border border-zinc-700/60 group-hover:text-amber-300 group-hover:border-amber-500/40 transition-colors">
+                      {optionLetter}
+                    </span>
+                    <div className="flex-1 text-center">
+                      <div className="text-xs font-bold text-zinc-400 group-hover:text-amber-300 mb-1.5 font-mono">
+                        {opt.name}
+                      </div>
+                      <MathView math={opt.latex} block />
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </>
         ) : (

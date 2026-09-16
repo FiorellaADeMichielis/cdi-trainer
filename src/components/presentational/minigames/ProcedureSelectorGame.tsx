@@ -59,8 +59,9 @@ export const ProcedureSelectorGame: React.FC<ProcedureSelectorGameProps> = ({
         </div>
 
         <div className="space-y-3">
-          {currentQ.options.map((opt) => {
+          {currentQ.options.map((opt, optIndex) => {
             const isChosen = selectedOptionId === opt.id;
+            const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIndex] || String.fromCharCode(65 + optIndex);
             let style = 'bg-[#1a1c22] hover:bg-zinc-800 border-zinc-800 text-zinc-200';
 
             if (selectedOptionId !== null) {
@@ -75,14 +76,27 @@ export const ProcedureSelectorGame: React.FC<ProcedureSelectorGameProps> = ({
                 type="button"
                 disabled={selectedOptionId !== null}
                 onClick={() => onAnswer(opt.id, opt.isCorrect)}
-                className={`w-full p-4 sm:p-5 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[52px] ${style}`}
+                className={`w-full p-4 sm:p-5 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[52px] flex items-start gap-3.5 group ${style}`}
               >
-                <div>{opt.text}</div>
-                {selectedOptionId !== null && isChosen && (
-                  <div className="mt-2 text-xs text-zinc-300 pt-2 border-t border-zinc-800 font-normal leading-relaxed">
-                    {opt.explanation}
-                  </div>
-                )}
+                <span className={`size-7 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 transition-colors ${
+                  selectedOptionId !== null
+                    ? opt.isCorrect
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : isChosen
+                        ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                        : 'bg-zinc-800/50 text-zinc-500 border border-zinc-700/30'
+                    : 'bg-zinc-800 text-zinc-400 group-hover:border-zinc-600 group-hover:text-zinc-200 border border-zinc-700/60'
+                }`}>
+                  {optionLetter}
+                </span>
+                <div className="flex-1">
+                  <div>{opt.text}</div>
+                  {selectedOptionId !== null && isChosen && (
+                    <div className="mt-2 text-xs text-zinc-300 pt-2 border-t border-zinc-800 font-normal leading-relaxed">
+                      {opt.explanation}
+                    </div>
+                  )}
+                </div>
               </button>
             );
           })}

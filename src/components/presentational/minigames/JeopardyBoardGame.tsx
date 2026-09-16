@@ -98,17 +98,25 @@ export const JeopardyBoardGame: React.FC<JeopardyBoardGameProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {selectedQ.options.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                disabled={feedback !== null}
-                onClick={() => onAnswerQ(opt.id, opt.isCorrect)}
-                className="p-4 sm:p-5 rounded-xl bg-[#1a1c22] hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/60 text-center text-xs sm:text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-              >
-                <MathView math={opt.textLatex} />
-              </button>
-            ))}
+            {selectedQ.options.map((opt, optIdx) => {
+              const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIdx] || String.fromCharCode(65 + optIdx);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  disabled={feedback !== null}
+                  onClick={() => onAnswerQ(opt.id, opt.isCorrect)}
+                  className="p-4 sm:p-5 rounded-xl bg-[#1a1c22] hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/60 text-left text-xs sm:text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 flex items-center gap-3 group"
+                >
+                  <span className="size-7 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 bg-zinc-800 text-zinc-400 border border-zinc-700/60 group-hover:text-amber-300 group-hover:border-amber-500/40 transition-colors">
+                    {optionLetter}
+                  </span>
+                  <div className="flex-1 text-center">
+                    <MathView math={opt.textLatex} />
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
           {feedback && (
