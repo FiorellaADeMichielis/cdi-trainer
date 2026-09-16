@@ -57,6 +57,21 @@ export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  if (examStarted && (!currentQuestion || !currentQuestion.options || currentQuestion.options.length === 0)) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-zinc-400 space-y-4 animate-fadeIn">
+        <p>No se encontraron preguntas disponibles para este examen.</p>
+        <button
+          type="button"
+          onClick={onFinish}
+          className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-colors cursor-pointer"
+        >
+          Volver al inicio
+        </button>
+      </div>
+    );
+  }
+
   // 1. Initial Briefing Screen
   if (!examStarted) {
     return (
@@ -289,8 +304,9 @@ export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
           </span>
 
           <div className="grid grid-cols-1 gap-3.5">
-            {currentQuestion.options.map((opt) => {
+            {currentQuestion.options.map((opt, optIndex) => {
               const isSelected = answers[currentQuestion.id] === opt.id;
+              const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIndex] || String.fromCharCode(65 + optIndex);
 
               return (
                 <button
@@ -304,13 +320,20 @@ export const ExamSimulatorPresenter: React.FC<ExamSimulatorPresenterProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3.5 overflow-x-auto w-full">
-                    <span className="size-7 rounded-full bg-[#14161a] border border-zinc-700 text-amber-400 font-mono font-bold text-xs flex items-center justify-center shrink-0">
-                      {opt.id.toUpperCase()}
+                    <span className={`size-7 rounded-full border font-mono font-bold text-xs flex items-center justify-center shrink-0 transition-colors ${
+                      isSelected
+                        ? 'bg-amber-500 text-zinc-950 border-amber-400'
+                        : 'bg-[#14161a] border-zinc-700 text-amber-400'
+                    }`}>
+                      {optionLetter}
                     </span>
                     <div className="text-xs sm:text-sm font-medium">
                       <MathView math={opt.textLatex} />
                     </div>
                   </div>
+                  {isSelected && (
+                    <IconCheck className="size-4 text-amber-400 shrink-0" />
+                  )}
                 </button>
               );
             })}

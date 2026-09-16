@@ -48,14 +48,29 @@ export const StudySessionPresenter: React.FC<StudySessionPresenterProps> = ({
   onOpenProfessorModal,
   onOpenSummaryModal
 }) => {
-  const selectedOption = currentExercise.options.find(o => o.id === selectedOptionId);
-  const isCorrect = selectedOption?.isCorrect ?? false;
-
   const formatTimer = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  if (!currentExercise || !currentExercise.options || currentExercise.options.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-zinc-400 space-y-4 animate-fadeIn">
+        <p>No se encontraron ejercicios disponibles para esta sesión.</p>
+        <button
+          type="button"
+          onClick={onOpenSummaryModal}
+          className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-colors cursor-pointer"
+        >
+          Volver al panel
+        </button>
+      </div>
+    );
+  }
+
+  const selectedOption = currentExercise.options.find(o => o.id === selectedOptionId);
+  const isCorrect = selectedOption?.isCorrect ?? false;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-10 animate-fadeIn">
@@ -126,20 +141,26 @@ export const StudySessionPresenter: React.FC<StudySessionPresenterProps> = ({
           </span>
 
           <div className="grid grid-cols-1 gap-3.5">
-            {currentExercise.options.map((opt) => {
+            {currentExercise.options.map((opt, optIndex) => {
               const isSelected = selectedOptionId === opt.id;
+              const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIndex] || String.fromCharCode(65 + optIndex);
               let btnStyle = 'bg-[#1a1c22] hover:bg-zinc-800/80 border-zinc-800 text-zinc-200';
+              let badgeStyle = 'bg-[#14161a] border-zinc-700 text-amber-400';
 
               if (isAnswered) {
                 if (opt.isCorrect) {
                   btnStyle = 'bg-emerald-950/40 border-emerald-500/80 text-emerald-200';
+                  badgeStyle = 'bg-emerald-500 text-zinc-950 border-emerald-400 font-bold';
                 } else if (isSelected && !opt.isCorrect) {
                   btnStyle = 'bg-rose-950/40 border-rose-500/80 text-rose-200';
+                  badgeStyle = 'bg-rose-500 text-zinc-950 border-rose-400 font-bold';
                 } else {
                   btnStyle = 'bg-[#14161a] border-zinc-800/40 opacity-40 text-zinc-500';
+                  badgeStyle = 'bg-[#14161a] border-zinc-800 text-zinc-600';
                 }
               } else if (isSelected) {
                 btnStyle = 'bg-zinc-800 border-amber-500/80 text-zinc-100 shadow-sm';
+                badgeStyle = 'bg-amber-500 text-zinc-950 border-amber-400 font-bold';
               }
 
               return (
@@ -151,8 +172,8 @@ export const StudySessionPresenter: React.FC<StudySessionPresenterProps> = ({
                   className={`w-full p-4 sm:p-5 rounded-xl border text-left transition-all flex items-center justify-between gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 min-h-[56px] ${btnStyle}`}
                 >
                   <div className="flex items-center gap-3.5 overflow-x-auto w-full">
-                    <span className="size-7 rounded-full bg-[#14161a] border border-zinc-700 text-amber-400 font-mono font-bold text-xs flex items-center justify-center shrink-0">
-                      {opt.id.toUpperCase()}
+                    <span className={`size-7 rounded-full border font-mono text-xs flex items-center justify-center shrink-0 transition-colors ${badgeStyle}`}>
+                      {optionLetter}
                     </span>
                     <div className="text-xs sm:text-sm font-medium">
                       <MathView math={opt.textLatex} />

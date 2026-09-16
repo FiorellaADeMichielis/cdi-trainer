@@ -9,6 +9,7 @@ interface MathViewProps {
 
 export const MathView: React.FC<MathViewProps> = ({ math, block = false, className = '' }) => {
   const html = useMemo(() => {
+    if (!math || typeof math !== 'string') return '';
     try {
       return katex.renderToString(math, {
         displayMode: block,
@@ -16,9 +17,11 @@ export const MathView: React.FC<MathViewProps> = ({ math, block = false, classNa
         strict: false,
       });
     } catch {
-      return math;
+      return math || '';
     }
   }, [math, block]);
+
+  if (!math || typeof math !== 'string') return null;
 
   if (block) {
     return (

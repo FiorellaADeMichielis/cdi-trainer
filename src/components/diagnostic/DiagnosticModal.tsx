@@ -5,6 +5,7 @@ import {
   IconShieldCheck, 
   IconGraduationCap, 
   IconBook, 
+  IconCheck,
   IconCheckCircle, 
   IconClose 
 } from '../icons';
@@ -345,20 +346,39 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
 
             {/* Opciones */}
             <div className="space-y-2.5">
-              {currentEx.options.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => handleSelectOption(opt.id)}
-                  className={`w-full p-4 rounded-xl border text-left text-xs font-medium transition-all cursor-pointer ${
-                    selectedOptId === opt.id
-                      ? 'bg-zinc-800 border-amber-500/80 text-zinc-100 shadow-sm'
-                      : 'bg-[#1a1c22] border-zinc-800 hover:bg-zinc-800/80 text-zinc-300'
-                  }`}
-                >
-                  <MathView math={opt.textLatex} />
-                </button>
-              ))}
+              {currentEx.options.map((opt, optIndex) => {
+                const isSelected = selectedOptId === opt.id;
+                const optionLetter = ['A', 'B', 'C', 'D', 'E'][optIndex] || String.fromCharCode(65 + optIndex);
+
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => handleSelectOption(opt.id)}
+                    className={`w-full p-4 rounded-xl border text-left text-xs font-medium transition-all cursor-pointer flex items-center justify-between gap-3.5 ${
+                      isSelected
+                        ? 'bg-zinc-800 border-amber-500/80 text-zinc-100 shadow-sm'
+                        : 'bg-[#1a1c22] border-zinc-800 hover:bg-zinc-800/80 text-zinc-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 overflow-x-auto w-full">
+                      <span className={`size-6 rounded-full border font-mono font-bold text-xs flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected
+                          ? 'bg-amber-500 text-zinc-950 border-amber-400'
+                          : 'bg-[#14161a] border-zinc-700 text-amber-400'
+                      }`}>
+                        {optionLetter}
+                      </span>
+                      <div className="overflow-x-auto">
+                        <MathView math={opt.textLatex} />
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <IconCheck className="size-4 text-amber-400 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Botón avanzar */}
