@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTrainerState } from './hooks/useTrainerState';
 import { EXERCISES_DATA } from './data/exercisesData';
 
@@ -12,6 +12,8 @@ import { ExamSimulatorContainer } from './components/containers/ExamSimulatorCon
 import { DiagnosticModal } from './components/diagnostic/DiagnosticModal';
 
 export const App: React.FC = () => {
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+
   const {
     userProfile,
     unitMasteries,
@@ -62,6 +64,7 @@ export const App: React.FC = () => {
         }}
         onToggleSound={handleToggleSound}
         onResetData={handleResetData}
+        onOpenWelcome={() => setIsWelcomeModalOpen(true)}
       />
 
       {/* 2. Main Workstation Area */}
@@ -129,17 +132,28 @@ export const App: React.FC = () => {
 
       </main>
 
-      {/* Adaptive Onboarding Diagnostic Modal */}
+      {/* Adaptive Onboarding Welcome & Diagnostic Modal */}
       <DiagnosticModal
-        isOpen={!userProfile.diagnosticCompleted}
-        onCompleteDiagnostic={handleCompleteDiagnostic}
+        isOpen={!userProfile.diagnosticCompleted || isWelcomeModalOpen}
+        onCompleteDiagnostic={(computedMasteries) => {
+          handleCompleteDiagnostic(computedMasteries);
+          setIsWelcomeModalOpen(false);
+        }}
+        onClose={() => setIsWelcomeModalOpen(false)}
       />
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800/80 bg-[#0c0d10] py-8 text-center text-xs text-zinc-500 font-sans">
+      <footer className="border-t border-zinc-800/80 bg-[#0c0d10] py-8 text-center text-xs text-zinc-500 font-sans space-y-2">
         <p>
           Cálculo Diferencial e Integral · Licenciatura en Sistemas de Información · FaCENA - UNNE
         </p>
+        <button
+          type="button"
+          onClick={() => setIsWelcomeModalOpen(true)}
+          className="text-[11px] text-zinc-400 hover:text-amber-400 transition-colors underline underline-offset-4 cursor-pointer block mx-auto"
+        >
+          ¿Por qué existe esta app? / Ver guía y calibración inicial
+        </button>
       </footer>
 
     </div>

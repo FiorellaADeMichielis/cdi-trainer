@@ -9,7 +9,8 @@ import {
   IconAward,
   IconGraduationCap,
   IconCalendar,
-  IconUnneEmblem
+  IconUnneEmblem,
+  IconHelp
 } from '../icons';
 import { UserProfile } from '../../types/domain';
 import { NavigationTab } from '../../hooks/useTrainerState';
@@ -21,6 +22,7 @@ interface NavbarPresenterProps {
   onSelectTab: (tab: NavigationTab) => void;
   onToggleSound: () => void;
   onResetData: () => void;
+  onOpenWelcome?: () => void;
 }
 
 export const NavbarPresenter: React.FC<NavbarPresenterProps> = ({
@@ -29,7 +31,8 @@ export const NavbarPresenter: React.FC<NavbarPresenterProps> = ({
   daysRemaining,
   onSelectTab,
   onToggleSound,
-  onResetData
+  onResetData,
+  onOpenWelcome
 }) => {
   const navItems: { id: NavigationTab; label: string; icon: React.ReactNode }[] = [
     { id: 'dashboard', label: 'Inicio', icon: <IconGraduationCap className="size-3.5 shrink-0" /> },
@@ -121,22 +124,37 @@ export const NavbarPresenter: React.FC<NavbarPresenterProps> = ({
                 </div>
               )}
 
+              {/* Help & Welcome Guide */}
+              {onOpenWelcome && (
+                <button
+                  type="button"
+                  onClick={onOpenWelcome}
+                  aria-label="Ver guía de bienvenida y calibración"
+                  title="¿De qué se trata esta app? / Guía"
+                  className="size-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none cursor-pointer"
+                >
+                  <IconHelp className="size-4" />
+                </button>
+              )}
+
               {/* Sound Toggle */}
               <button
+                type="button"
                 onClick={onToggleSound}
                 aria-label={userProfile.soundEnabled ? 'Silenciar sonidos' : 'Activar sonidos'}
                 title={userProfile.soundEnabled ? 'Silenciar sonidos' : 'Activar sonidos'}
-                className="size-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none"
+                className="size-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none cursor-pointer"
               >
                 {userProfile.soundEnabled ? <IconVolume className="size-4" /> : <IconVolumeMute className="size-4 text-zinc-600" />}
               </button>
 
               {/* Reset Data */}
               <button
+                type="button"
                 onClick={onResetData}
                 aria-label="Reiniciar progreso de estudio"
                 title="Reiniciar progreso de estudio"
-                className="size-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none"
+                className="size-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none cursor-pointer"
               >
                 <IconRotate className="size-4" />
               </button>

@@ -74,3 +74,4 @@ Los archivos finales de distribución se generarán en la carpeta `dist/`.
 El proyecto está optimizado para desplegarse con un solo clic en plataformas estáticas como:
 - **Vercel**: Conectar el repositorio de GitHub; detecta la configuración de Vite automáticamente.
 - **Cloudflare Pages**: Conectar el repositorio, seleccionar preset `Vite` (`npm run build`, output `dist`).
+
